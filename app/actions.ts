@@ -43,6 +43,17 @@ export async function syncAnimeData(malId: number) {
     const episodes = await getAnimeEpisodes(malId)
     await rateLimit()
 
+    // Verify service role client connection
+    const { data: serviceRoleTest, error: serviceRoleError } = await supabaseAdmin
+      .from('anime')
+      .select('*')
+      .limit(1)
+      
+    if (serviceRoleError) {
+      console.error('Service role client connection error:', serviceRoleError)
+      throw serviceRoleError
+    }
+
     // Check if anime already exists
     const { data: existingAnime, error: selectError } = await supabaseAdmin
       .from('anime')
