@@ -70,9 +70,9 @@ export async function syncAnimeData(malId: number) {
       const formattedEpisodes = episodes.map((ep: any) => ({
         anime_id: anime.id,
         mal_id: malId,
-        episode_number: ep.mal_id,
-        title: ep.title,
-        duration: 1440, // Default duration in seconds
+        episode_number: ep.episode_number || ep.mal_id,
+        title: ep.title || `Episode ${ep.episode_number || ep.mal_id}`,
+        duration: ep.duration || 1440,
         updated_at: new Date().toISOString()
       }))
 
