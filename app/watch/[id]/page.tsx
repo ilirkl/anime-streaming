@@ -4,9 +4,11 @@ import Image from "next/image"
 import { Star } from 'lucide-react'
 import { VideoPlayer } from "@/components/video-player"
 import { EpisodeList } from "@/components/episode-list"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { getAnimeList, getAnimeEpisodesById } from "@/app/actions"
+import { Button, ButtonProps } from "@/components/ui/button"
+import { Badge, BadgeProps } from "@/components/ui/badge"
+import type { FC } from 'react'
+import { supabaseAdmin } from "@/lib/supabase"
+import { getAnimeEpisodesById } from "@/app/actions"
 
 interface Anime {
   id: string
@@ -34,9 +36,18 @@ interface Episode {
 }
 
 async function getAnimeDetails(id: string): Promise<Anime | null> {
-  const animeList = await getAnimeList(1)
-  const anime = animeList.find((a: Anime) => a.id === id)
-  return anime || null
+  const { data: anime, error } = await supabaseAdmin
+    .from('anime')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) {
+    console.error('Error fetching anime details:', error)
+    return null
+  }
+
+  return anime
 }
 
 export default async function WatchPage({ params }: { params: { id: string } }) {
