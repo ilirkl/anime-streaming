@@ -18,6 +18,21 @@ export async function getAnimeList(limit = 8) {
   return data
 }
 
+export async function getAnimeEpisodesById(animeId: string) {
+  const { data, error } = await supabaseAdmin
+    .from('episodes')
+    .select('*')
+    .eq('anime_id', animeId)
+    .order('episode_number', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching anime episodes:', error)
+    return []
+  }
+
+  return data
+}
+
 export async function syncAnimeData(malId: number) {
   try {
     // Fetch anime details from Jikan

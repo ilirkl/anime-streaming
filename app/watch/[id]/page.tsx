@@ -6,41 +6,42 @@ import { VideoPlayer } from "@/components/video-player"
 import { EpisodeList } from "@/components/episode-list"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { supabase } from "@/lib/supabase"
+import { getAnimeList, getAnimeEpisodesById } from "@/app/actions"
 
-async function getAnimeDetails(id: string) {
-  const { data: anime, error } = await supabase
-    .from('anime')
-    .select('*')
-    .eq('id', id)
-    .single()
-
-  if (error) {
-    console.error('Error fetching anime details:', error)
-    return null
-  }
-
-  return anime
+interface Anime {
+  id: string
+  title: string
+  cover_image: string
+  description: string
+  rating: string
+  score: number
+  genres: string[]
+  duration: string
+  status: string
+  year: number
+  episode_count: number
+  updated_at: string
 }
 
-async function getAnimeEpisodes(animeId: string) {
-  const { data: episodes, error } = await supabase
-    .from('episodes')
-    .select('*')
-    .eq('anime_id', animeId)
-    .order('episode_number', { ascending: true })
+interface Episode {
+  id: string
+  anime_id: string
+  mal_id: number
+  episode_number: number
+  title: string
+  duration: number
+  updated_at: string
+}
 
-  if (error) {
-    console.error('Error fetching anime episodes:', error)
-    return []
-  }
-
-  return episodes
+async function getAnimeDetails(id: string): Promise<Anime | null> {
+  const animeList = await getAnimeList(1)
+  const anime = animeList.find((a: Anime) => a.id === id)
+  return anime || null
 }
 
 export default async function WatchPage({ params }: { params: { id: string } }) {
   const anime = await getAnimeDetails(params.id)
-  const episodes = await getAnimeEpisodes(params.id)
+  const episodes = await getAnimeEpisodesById(params.id)
 
   if (!anime) {
     notFound()
@@ -119,4 +120,3 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
     </div>
   )
 }
-
