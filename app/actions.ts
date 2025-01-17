@@ -1,6 +1,6 @@
 'use server'
 
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 import { getAnimeById, getAnimeEpisodes, rateLimit, type JikanAnime } from '@/lib/jikan'
 
 export async function syncAnimeData(malId: number) {
@@ -14,7 +14,7 @@ export async function syncAnimeData(malId: number) {
     await rateLimit()
 
     // Update or insert anime in Supabase
-    const { data: anime, error: upsertError } = await supabase
+    const { data: anime, error: upsertError } = await supabaseAdmin
       .from('anime')
       .upsert({
         mal_id: malId,
@@ -46,7 +46,7 @@ export async function syncAnimeData(malId: number) {
         updated_at: new Date().toISOString()
       }))
 
-      const { error: episodesError } = await supabase
+      const { error: episodesError } = await supabaseAdmin
         .from('episodes')
         .upsert(formattedEpisodes)
 
@@ -59,4 +59,3 @@ export async function syncAnimeData(malId: number) {
     return { success: false, error }
   }
 }
-
