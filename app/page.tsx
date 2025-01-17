@@ -33,7 +33,7 @@ export default async function Home() {
           </Link>
         </div>
         {latestAnime.length === 0 ? (
-          <p>No anime found. Please sync some anime data from the admin page.</p>
+          <p>No anime found. Please sync  the admin page.</p>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {latestAnime.map((anime) => (
