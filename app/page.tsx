@@ -3,25 +3,10 @@ import Link from "next/link"
 import { Star } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { supabase } from "@/lib/supabase"
-
-async function getLatestAnime() {
-  const { data, error } = await supabase
-    .from('anime')
-    .select('*')
-    .order('updated_at', { ascending: false })
-    .limit(8)
-
-  if (error) {
-    console.error('Error fetching latest anime:', error)
-    return []
-  }
-
-  return data
-}
+import { getAnimeList } from './actions'
 
 export default async function Home() {
-  const latestAnime = await getLatestAnime()
+  const latestAnime = await getAnimeList()
 
   return (
     <div className="container py-6">
@@ -86,4 +71,3 @@ export default async function Home() {
     </div>
   )
 }
-

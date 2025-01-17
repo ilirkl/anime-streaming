@@ -3,6 +3,21 @@
 import { supabaseAdmin } from '@/lib/supabase'
 import { getAnimeById, getAnimeEpisodes, rateLimit, type JikanAnime } from '@/lib/jikan'
 
+export async function getAnimeList(limit = 8) {
+  const { data, error } = await supabaseAdmin
+    .from('anime')
+    .select('*')
+    .order('updated_at', { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    console.error('Error fetching anime list:', error)
+    return []
+  }
+
+  return data
+}
+
 export async function syncAnimeData(malId: number) {
   try {
     // Fetch anime details from Jikan
